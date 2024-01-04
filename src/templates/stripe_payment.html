@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stripe Payment</title>
+        <link rel="stylesheet" href="../static/css/stripe.css">
+        <script src="https://js.stripe.com/v3/"></script>
+        <style>
+        
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Stripe Payment Example</h1>
+            <div id="card-element"></div>
+            <button id="submit">Submit Payment</button>
+        </div>
+
+        <script>
+        // Set Stripe public key 
+        var stripe = Stripe('STRIPE_PUBLIC_KEY');
+    
+        // Create an instance of Elements
+        var elements = stripe.elements();
+    
+        // Create an instance of the card Element
+        var card = elements.create('card');
+    
+        // Add an instance of the card Element into the 'card-element' div
+        card.mount('#card-element');
+    
+        // Handle form submission
+        var form = document.querySelector('form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            stripe.confirmCardPayment("{{ client_secret }}", {
+                payment_method: {
+                    card: card,
+                }
+            }).then(function (result) {
+                if (result.error) {
+                    // Show error to customer
+                    console.error(result.error.message);
+                } else {
+                    // The payment succeeded
+                    console.log(result.paymentIntent);
+                }
+            });
+        });
+    </script>
+
+    </body>
+</html>
